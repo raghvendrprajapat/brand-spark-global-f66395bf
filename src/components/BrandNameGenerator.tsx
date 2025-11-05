@@ -26,6 +26,7 @@ interface FormData {
 interface GeneratedName {
   id: string;
   name: string;
+  isCheckingDomain?: boolean;
   domainStatus?: {
     com: boolean;
     in: boolean;
@@ -153,6 +154,16 @@ export const BrandNameGenerator = () => {
   };
 
   const checkDomain = async (name: GeneratedName) => {
+    // Set loading state
+    setAllBatches(prev =>
+      prev.map(batch =>
+        batch.map(n => n.id === name.id ? { ...n, isCheckingDomain: true } : n)
+      )
+    );
+    setWishlist(prev =>
+      prev.map(n => n.id === name.id ? { ...n, isCheckingDomain: true } : n)
+    );
+
     toast.info(`Checking domain for ${name.name}...`);
     
     try {
@@ -175,6 +186,7 @@ export const BrandNameGenerator = () => {
       
       const updatedName = {
         ...name,
+        isCheckingDomain: false,
         domainStatus: {
           com: data.availability.com,
           in: data.availability.in,
@@ -204,6 +216,16 @@ export const BrandNameGenerator = () => {
     } catch (error) {
       console.error('Domain check error:', error);
       toast.error('Failed to check domain availability');
+      
+      // Clear loading state on error
+      setAllBatches(prev =>
+        prev.map(batch =>
+          batch.map(n => n.id === name.id ? { ...n, isCheckingDomain: false } : n)
+        )
+      );
+      setWishlist(prev =>
+        prev.map(n => n.id === name.id ? { ...n, isCheckingDomain: false } : n)
+      );
     }
   };
 
@@ -418,7 +440,12 @@ export const BrandNameGenerator = () => {
                     >
                       <Heart className={`h-4 w-4 ${wishlist.find(w => w.id === name.id) ? 'fill-current' : ''}`} />
                     </Button>
-                    {name.domainStatus?.checked ? (
+                    {name.isCheckingDomain ? (
+                      <div className="flex items-center gap-2 px-3 py-1">
+                        <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        <span className="text-xs text-muted-foreground">Checking...</span>
+                      </div>
+                    ) : name.domainStatus?.checked ? (
                       <div className="flex gap-1">
                         <div className={`px-2 py-1 rounded text-xs font-medium flex items-center gap-1 ${name.domainStatus.com ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
                           {name.domainStatus.com ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
@@ -495,7 +522,12 @@ export const BrandNameGenerator = () => {
                     {idx + 1}. {name.name}
                   </span>
                   <div className="flex items-center gap-2">
-                    {name.domainStatus?.checked ? (
+                    {name.isCheckingDomain ? (
+                      <div className="flex items-center gap-2 px-3 py-1">
+                        <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        <span className="text-xs text-muted-foreground">Checking...</span>
+                      </div>
+                    ) : name.domainStatus?.checked ? (
                       <div className="flex gap-1">
                         <div className={`px-2 py-1 rounded text-xs font-medium flex items-center gap-1 ${name.domainStatus.com ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
                           {name.domainStatus.com ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
