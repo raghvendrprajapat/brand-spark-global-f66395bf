@@ -74,12 +74,10 @@ export const BrandNameGenerator = () => {
     hinglish: true,
   });
 
-  const [generatedNames, setGeneratedNames] = useState<GeneratedName[]>([]);
+  const [allBatches, setAllBatches] = useState<GeneratedName[][]>([]);
+  const [currentBatchIndex, setCurrentBatchIndex] = useState(0);
   const [wishlist, setWishlist] = useState<GeneratedName[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [currentBatch, setCurrentBatch] = useState(1);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
 
   // Force dark mode
   useEffect(() => {
@@ -103,9 +101,8 @@ export const BrandNameGenerator = () => {
     setIsGenerating(true);
     try {
       const names = await generateBrandNames(formData);
-      setGeneratedNames(names);
-      setCurrentBatch(1);
-      setCurrentPage(1);
+      setAllBatches([names]);
+      setCurrentBatchIndex(0);
       toast.success("10 brand names generated!");
     } catch (error) {
       // Error already handled in generateBrandNames
@@ -118,9 +115,8 @@ export const BrandNameGenerator = () => {
     setIsGenerating(true);
     try {
       const names = await generateBrandNames(formData);
-      setGeneratedNames(names);
-      setCurrentBatch(prev => prev + 1);
-      setCurrentPage(1);
+      setAllBatches(prev => [...prev, names]);
+      setCurrentBatchIndex(prev => prev + 1);
       toast.success("New batch generated!");
     } catch (error) {
       // Error already handled in generateBrandNames
@@ -129,23 +125,20 @@ export const BrandNameGenerator = () => {
     }
   };
 
-  // Pagination logic
-  const totalPages = Math.ceil(generatedNames.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentNames = generatedNames.slice(startIndex, endIndex);
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
+  const handlePreviousBatch = () => {
+    if (currentBatchIndex > 0) {
+      setCurrentBatchIndex(prev => prev - 1);
     }
   };
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(prev => prev + 1);
+  const handleNextBatchNavigation = () => {
+    if (currentBatchIndex < allBatches.length - 1) {
+      setCurrentBatchIndex(prev => prev + 1);
     }
   };
+
+  const currentBatch = allBatches[currentBatchIndex] || [];
+  const totalBatches = allBatches.length;
 
   const addToWishlist = (name: GeneratedName) => {
     if (!wishlist.find(w => w.id === name.id)) {
@@ -190,9 +183,11 @@ export const BrandNameGenerator = () => {
         }
       };
 
-      // Update in generated names
-      setGeneratedNames(prev =>
-        prev.map(n => n.id === name.id ? updatedName : n)
+      // Update in all batches
+      setAllBatches(prev =>
+        prev.map(batch =>
+          batch.map(n => n.id === name.id ? updatedName : n)
+        )
       );
 
       // Update in wishlist if present
@@ -384,7 +379,7 @@ export const BrandNameGenerator = () => {
                 variant="outline"
                 className="w-full"
                 onClick={handleNextBatch}
-                disabled={isGenerating || generatedNames.length === 0}
+                disabled={isGenerating || allBatches.length === 0}
               >
                 Next 10 (new batch)
               </Button>
@@ -396,28 +391,23 @@ export const BrandNameGenerator = () => {
         <Card className="p-6 mb-6 bg-card border-border">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-foreground">
-              Results (Batch {currentBatch}/1)
+              Results (Batch {currentBatchIndex + 1}/{totalBatches || 1})
             </h2>
-            {generatedNames.length > 0 && (
-              <span className="text-sm text-muted-foreground">
-                Page {currentPage} of {totalPages}
-              </span>
-            )}
           </div>
 
-          {generatedNames.length === 0 ? (
+          {currentBatch.length === 0 ? (
             <p className="text-muted-foreground text-center py-8">
               Generate to see your 10 names here
             </p>
           ) : (
             <div className="space-y-2">
-              {currentNames.map((name, idx) => (
+              {currentBatch.map((name, idx) => (
                 <div
                   key={name.id}
                   className="flex items-center justify-between p-3 rounded-lg bg-background border border-border/50"
                 >
                   <span className="text-foreground font-medium">
-                    {startIndex + idx + 1}. {name.name}
+                    {idx + 1}. {name.name}
                   </span>
                   <div className="flex items-center gap-2">
                     <Button
@@ -462,18 +452,18 @@ export const BrandNameGenerator = () => {
             <Button 
               variant="ghost" 
               size="sm" 
-              disabled={currentPage === 1}
-              onClick={handlePreviousPage}
-              className={currentPage === 1 ? 'text-muted-foreground' : 'text-foreground'}
+              disabled={currentBatchIndex === 0}
+              onClick={handlePreviousBatch}
+              className={currentBatchIndex === 0 ? 'text-muted-foreground' : 'text-foreground'}
             >
               Previous
             </Button>
             <Button 
               variant="ghost" 
               size="sm" 
-              disabled={currentPage === totalPages || generatedNames.length === 0}
-              onClick={handleNextPage}
-              className={currentPage === totalPages || generatedNames.length === 0 ? 'text-muted-foreground' : 'text-foreground'}
+              disabled={currentBatchIndex === totalBatches - 1 || totalBatches === 0}
+              onClick={handleNextBatchNavigation}
+              className={currentBatchIndex === totalBatches - 1 || totalBatches === 0 ? 'text-muted-foreground' : 'text-foreground'}
             >
               Next
             </Button>
