@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Trash2, Square } from "lucide-react";
+import { Trash2, Square, Heart, X, Check } from "lucide-react";
 import { toast } from "sonner";
 
 interface FormData {
@@ -26,6 +26,12 @@ interface FormData {
 interface GeneratedName {
   id: string;
   name: string;
+  domainStatus?: {
+    com: boolean;
+    in: boolean;
+    ai: boolean;
+    checked: boolean;
+  };
 }
 
 const generateBrandNames = async (formData: FormData): Promise<GeneratedName[]> => {
@@ -131,8 +137,31 @@ export const BrandNameGenerator = () => {
     toast.success("Removed from wishlist");
   };
 
-  const checkDomain = (name: string) => {
-    toast.info(`Checking domain for ${name}...`);
+  const checkDomain = async (name: GeneratedName) => {
+    // Simulate domain check with random results
+    const randomAvailability = () => Math.random() > 0.5;
+    
+    const updatedName = {
+      ...name,
+      domainStatus: {
+        com: randomAvailability(),
+        in: randomAvailability(),
+        ai: randomAvailability(),
+        checked: true
+      }
+    };
+
+    // Update in generated names
+    setGeneratedNames(prev =>
+      prev.map(n => n.id === name.id ? updatedName : n)
+    );
+
+    // Update in wishlist if present
+    setWishlist(prev =>
+      prev.map(n => n.id === name.id ? updatedName : n)
+    );
+
+    toast.success(`Domain checked for ${name.name}`);
   };
 
   return (
@@ -332,21 +361,58 @@ export const BrandNameGenerator = () => {
               {generatedNames.map((name, idx) => (
                 <div
                   key={name.id}
-                  className="flex items-center justify-between p-3 rounded-lg bg-background hover:bg-muted/30 cursor-pointer transition-colors"
-                  onClick={() => addToWishlist(name)}
+                  className="flex items-center justify-between p-3 rounded-lg bg-background border border-border/50"
                 >
-                  <span className="text-foreground">
+                  <span className="text-foreground font-medium">
                     {idx + 1}. {name.name}
                   </span>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className={`h-8 w-8 ${wishlist.find(w => w.id === name.id) ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'}`}
+                      onClick={() => addToWishlist(name)}
+                    >
+                      <Heart className={`h-4 w-4 ${wishlist.find(w => w.id === name.id) ? 'fill-current' : ''}`} />
+                    </Button>
+                    {name.domainStatus?.checked ? (
+                      <div className="flex gap-1">
+                        <div className={`px-2 py-1 rounded text-xs font-medium flex items-center gap-1 ${name.domainStatus.com ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                          {name.domainStatus.com ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                          .com
+                        </div>
+                        <div className={`px-2 py-1 rounded text-xs font-medium flex items-center gap-1 ${name.domainStatus.in ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                          {name.domainStatus.in ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                          .in
+                        </div>
+                        <div className={`px-2 py-1 rounded text-xs font-medium flex items-center gap-1 ${name.domainStatus.ai ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                          {name.domainStatus.ai ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                          .ai
+                        </div>
+                      </div>
+                    ) : (
+                      <Button
+                        size="sm"
+                        className="bg-primary hover:bg-primary/90 text-xs px-3"
+                        onClick={() => checkDomain(name)}
+                      >
+                        Check Domain Availability
+                      </Button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
           )}
 
           <div className="flex justify-between mt-4 pt-4 border-t border-border">
-            <Button variant="ghost" size="sm" disabled>Previous</Button>
-            <Button variant="ghost" size="sm" disabled>Next</Button>
+            <Button variant="ghost" size="sm" disabled className="text-muted-foreground">Previous</Button>
+            <Button variant="ghost" size="sm" disabled className="text-muted-foreground">Next</Button>
           </div>
+
+          <p className="text-xs text-muted-foreground text-center mt-4 italic">
+            Domain availability shown is indicative only — please verify at a domain registrar before purchase.
+          </p>
         </Card>
 
         {/* Wishlist Card */}
@@ -366,24 +432,43 @@ export const BrandNameGenerator = () => {
                   key={name.id}
                   className="flex items-center justify-between gap-3"
                 >
-                  <span className="text-foreground flex-1">
+                  <span className="text-foreground font-medium flex-1">
                     {idx + 1}. {name.name}
                   </span>
-                  <Button
-                    size="sm"
-                    className="bg-primary hover:bg-primary/90 text-xs"
-                    onClick={() => checkDomain(name.name)}
-                  >
-                    Check Domain Availability
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                    onClick={() => removeFromWishlist(name.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    {name.domainStatus?.checked ? (
+                      <div className="flex gap-1">
+                        <div className={`px-2 py-1 rounded text-xs font-medium flex items-center gap-1 ${name.domainStatus.com ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                          {name.domainStatus.com ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                          .com
+                        </div>
+                        <div className={`px-2 py-1 rounded text-xs font-medium flex items-center gap-1 ${name.domainStatus.in ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                          {name.domainStatus.in ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                          .in
+                        </div>
+                        <div className={`px-2 py-1 rounded text-xs font-medium flex items-center gap-1 ${name.domainStatus.ai ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                          {name.domainStatus.ai ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                          .ai
+                        </div>
+                      </div>
+                    ) : (
+                      <Button
+                        size="sm"
+                        className="bg-primary hover:bg-primary/90 text-xs px-3"
+                        onClick={() => checkDomain(name)}
+                      >
+                        Check Domain Availability
+                      </Button>
+                    )}
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                      onClick={() => removeFromWishlist(name.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
