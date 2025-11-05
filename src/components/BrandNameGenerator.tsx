@@ -28,22 +28,80 @@ interface GeneratedName {
   name: string;
 }
 
-const sampleNames = [
-  "Nivaan", "Mekina", "Capriva Estate", "Captiva Estate", "Caplore Estate",
-  "Eolhoscar", "Eovencar", "Eoboltcar", "Eoflexcar", "KPSnickey",
-  "KPShipmark", "Vistara", "Zenova", "Fluxion", "Apexify",
-  "Vibrant", "Echora", "Prismly", "Nexify", "Clarix"
-];
+const generateBrandNames = async (formData: FormData): Promise<GeneratedName[]> => {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  
+  if (!apiKey) {
+    toast.error("Gemini API key not configured");
+    throw new Error("API key missing");
+  }
 
-const generateBrandNames = (formData: FormData): GeneratedName[] => {
-  const names = [...sampleNames]
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 10)
-    .map((name, idx) => ({
-      id: `name-${Date.now()}-${idx}`,
-      name: name
-    }));
-  return names;
+  const styles = [];
+  if (formData.coined) styles.push("coined");
+  if (formData.compound) styles.push("compound");
+  if (formData.blend) styles.push("blend");
+  if (formData.metaphor) styles.push("metaphor");
+
+  const languages = [];
+  if (formData.english) languages.push("English");
+  if (formData.hinglish) languages.push("Hinglish");
+
+  const prompt = `Generate exactly 10 unique brand names for the ${formData.industry} industry.
+
+Style preferences: ${styles.join(", ")}
+Languages: ${languages.join(", ")}
+${formData.startingLetter ? `Starting letter(s): ${formData.startingLetter}` : ""}
+${formData.includeKeywords ? `Must include keywords: ${formData.includeKeywords}` : ""}
+${formData.avoidKeywords ? `Avoid keywords: ${formData.avoidKeywords}` : ""}
+${formData.otherRequirements ? `Additional requirements: ${formData.otherRequirements}` : ""}
+
+Return ONLY the 10 brand names, one per line, with no numbering, explanations, or additional text.`;
+
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: prompt
+            }]
+          }]
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!generatedText) {
+      throw new Error("No response from AI");
+    }
+
+    const names = generatedText
+      .split("\n")
+      .map((line: string) => line.trim())
+      .filter((line: string) => line.length > 0)
+      .slice(0, 10)
+      .map((name: string, idx: number) => ({
+        id: `name-${Date.now()}-${idx}`,
+        name: name
+      }));
+
+    return names;
+  } catch (error) {
+    console.error("Gemini API error:", error);
+    toast.error("Failed to generate names. Check console for details.");
+    throw error;
+  }
 };
 
 export const BrandNameGenerator = () => {
@@ -79,31 +137,37 @@ export const BrandNameGenerator = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!formData.industry.trim()) {
       toast.error("Please select an industry");
       return;
     }
 
     setIsGenerating(true);
-    setTimeout(() => {
-      const names = generateBrandNames(formData);
+    try {
+      const names = await generateBrandNames(formData);
       setGeneratedNames(names);
       setCurrentBatch(1);
-      setIsGenerating(false);
       toast.success("10 brand names generated!");
-    }, 1500);
+    } catch (error) {
+      // Error already handled in generateBrandNames
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
-  const handleNextBatch = () => {
+  const handleNextBatch = async () => {
     setIsGenerating(true);
-    setTimeout(() => {
-      const names = generateBrandNames(formData);
+    try {
+      const names = await generateBrandNames(formData);
       setGeneratedNames(names);
       setCurrentBatch(prev => prev + 1);
-      setIsGenerating(false);
       toast.success("New batch generated!");
-    }, 1200);
+    } catch (error) {
+      // Error already handled in generateBrandNames
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const addToWishlist = (name: GeneratedName) => {
