@@ -1,1 +1,4 @@
 project_id = "dsakgrtwfnbmxuvnpwij"
+
+[functions.generate-brand-names]
+verify_jwt = false

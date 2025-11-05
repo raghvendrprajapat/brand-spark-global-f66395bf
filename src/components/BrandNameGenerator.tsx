@@ -29,79 +29,28 @@ interface GeneratedName {
 }
 
 const generateBrandNames = async (formData: FormData): Promise<GeneratedName[]> => {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const response = await fetch(
+    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-brand-names`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ formData })
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to generate names');
+  }
+
+  const { names } = await response.json();
   
-  if (!apiKey) {
-    toast.error("Gemini API key not configured");
-    throw new Error("API key missing");
-  }
-
-  const styles = [];
-  if (formData.coined) styles.push("coined");
-  if (formData.compound) styles.push("compound");
-  if (formData.blend) styles.push("blend");
-  if (formData.metaphor) styles.push("metaphor");
-
-  const languages = [];
-  if (formData.english) languages.push("English");
-  if (formData.hinglish) languages.push("Hinglish");
-
-  const prompt = `Generate exactly 10 unique brand names for the ${formData.industry} industry.
-
-Style preferences: ${styles.join(", ")}
-Languages: ${languages.join(", ")}
-${formData.startingLetter ? `Starting letter(s): ${formData.startingLetter}` : ""}
-${formData.includeKeywords ? `Must include keywords: ${formData.includeKeywords}` : ""}
-${formData.avoidKeywords ? `Avoid keywords: ${formData.avoidKeywords}` : ""}
-${formData.otherRequirements ? `Additional requirements: ${formData.otherRequirements}` : ""}
-
-Return ONLY the 10 brand names, one per line, with no numbering, explanations, or additional text.`;
-
-  try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: prompt
-            }]
-          }]
-        })
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-    if (!generatedText) {
-      throw new Error("No response from AI");
-    }
-
-    const names = generatedText
-      .split("\n")
-      .map((line: string) => line.trim())
-      .filter((line: string) => line.length > 0)
-      .slice(0, 10)
-      .map((name: string, idx: number) => ({
-        id: `name-${Date.now()}-${idx}`,
-        name: name
-      }));
-
-    return names;
-  } catch (error) {
-    console.error("Gemini API error:", error);
-    toast.error("Failed to generate names. Check console for details.");
-    throw error;
-  }
+  return names.map((name: string, index: number) => ({
+    id: `name-${Date.now()}-${index}`,
+    name: name
+  }));
 };
 
 export const BrandNameGenerator = () => {
@@ -186,22 +135,15 @@ export const BrandNameGenerator = () => {
     toast.info(`Checking domain for ${name}...`);
   };
 
-  const isApiKeyConfigured = !!import.meta.env.VITE_GEMINI_API_KEY;
-
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-2xl mx-auto p-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[hsl(var(--brand-orange))] flex items-center justify-center">
-              <Square className="w-6 h-6 text-white fill-white" />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">BrandForge</h1>
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-10 h-10 rounded-lg bg-[hsl(var(--brand-orange))] flex items-center justify-center">
+            <Square className="w-6 h-6 text-white fill-white" />
           </div>
-          <div className={`px-3 py-1 rounded-full text-xs font-medium ${isApiKeyConfigured ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
-            {isApiKeyConfigured ? '✓ API Key Configured' : '✗ API Key Not Configured'}
-          </div>
+          <h1 className="text-2xl font-bold text-foreground">BrandForge</h1>
         </div>
 
         {/* Generation Criteria Card */}
