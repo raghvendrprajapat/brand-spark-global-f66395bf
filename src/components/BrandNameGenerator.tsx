@@ -6,8 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Trash2, Square, Heart, X, Check } from "lucide-react";
+import { Trash2, Heart, X, Check } from "lucide-react";
 import { toast } from "sonner";
+import appIcon from "@/assets/app-icon.png";
 
 interface FormData {
   industry: string;
@@ -234,9 +235,7 @@ export const BrandNameGenerator = () => {
       <div className="max-w-2xl mx-auto p-6">
         {/* Header */}
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-lg bg-[hsl(var(--brand-orange))] flex items-center justify-center">
-            <Square className="w-6 h-6 text-white fill-white" />
-          </div>
+          <img src={appIcon} alt="BrandForge" className="w-10 h-10" />
           <h1 className="text-2xl font-bold text-foreground">BrandForge</h1>
         </div>
 
