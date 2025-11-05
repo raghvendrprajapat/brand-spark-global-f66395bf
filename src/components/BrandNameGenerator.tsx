@@ -146,14 +146,36 @@ export const BrandNameGenerator = () => {
                   <SelectValue placeholder="Select an industry (required)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="tech">Technology</SelectItem>
-                  <SelectItem value="fashion">Fashion</SelectItem>
+                  <SelectItem value="tech">Technology & SaaS</SelectItem>
+                  <SelectItem value="fashion">Fashion & Apparel</SelectItem>
                   <SelectItem value="food">Food & Beverage</SelectItem>
-                  <SelectItem value="health">Healthcare</SelectItem>
-                  <SelectItem value="finance">Finance</SelectItem>
-                  <SelectItem value="education">Education</SelectItem>
-                  <SelectItem value="realestate">Real Estate</SelectItem>
-                  <SelectItem value="automotive">Automotive</SelectItem>
+                  <SelectItem value="health">Healthcare & Wellness</SelectItem>
+                  <SelectItem value="finance">Finance & Fintech</SelectItem>
+                  <SelectItem value="education">Education & E-learning</SelectItem>
+                  <SelectItem value="realestate">Real Estate & Property</SelectItem>
+                  <SelectItem value="automotive">Automotive & Mobility</SelectItem>
+                  <SelectItem value="ecommerce">E-commerce & Retail</SelectItem>
+                  <SelectItem value="travel">Travel & Hospitality</SelectItem>
+                  <SelectItem value="beauty">Beauty & Cosmetics</SelectItem>
+                  <SelectItem value="sports">Sports & Fitness</SelectItem>
+                  <SelectItem value="entertainment">Entertainment & Media</SelectItem>
+                  <SelectItem value="consulting">Consulting & Professional Services</SelectItem>
+                  <SelectItem value="logistics">Logistics & Supply Chain</SelectItem>
+                  <SelectItem value="manufacturing">Manufacturing & Industrial</SelectItem>
+                  <SelectItem value="agriculture">Agriculture & Farming</SelectItem>
+                  <SelectItem value="energy">Energy & Sustainability</SelectItem>
+                  <SelectItem value="gaming">Gaming & Esports</SelectItem>
+                  <SelectItem value="crypto">Crypto & Blockchain</SelectItem>
+                  <SelectItem value="ai">AI & Machine Learning</SelectItem>
+                  <SelectItem value="iot">IoT & Smart Devices</SelectItem>
+                  <SelectItem value="security">Cybersecurity</SelectItem>
+                  <SelectItem value="marketing">Marketing & Advertising</SelectItem>
+                  <SelectItem value="legal">Legal & Law Services</SelectItem>
+                  <SelectItem value="nonprofit">Non-profit & Social Impact</SelectItem>
+                  <SelectItem value="pets">Pets & Animal Care</SelectItem>
+                  <SelectItem value="home">Home & Interior Design</SelectItem>
+                  <SelectItem value="events">Events & Event Management</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>
