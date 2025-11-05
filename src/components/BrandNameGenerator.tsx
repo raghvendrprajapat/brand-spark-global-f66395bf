@@ -186,15 +186,22 @@ export const BrandNameGenerator = () => {
     toast.info(`Checking domain for ${name}...`);
   };
 
+  const isApiKeyConfigured = !!import.meta.env.VITE_GEMINI_API_KEY;
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-2xl mx-auto p-6">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-lg bg-[hsl(var(--brand-orange))] flex items-center justify-center">
-            <Square className="w-6 h-6 text-white fill-white" />
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-[hsl(var(--brand-orange))] flex items-center justify-center">
+              <Square className="w-6 h-6 text-white fill-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-foreground">BrandForge</h1>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">BrandForge</h1>
+          <div className={`px-3 py-1 rounded-full text-xs font-medium ${isApiKeyConfigured ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+            {isApiKeyConfigured ? '✓ API Key Configured' : '✗ API Key Not Configured'}
+          </div>
         </div>
 
         {/* Generation Criteria Card */}
