@@ -5,78 +5,70 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
-import { Sparkles, RefreshCw } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Trash2, Square } from "lucide-react";
 import { toast } from "sonner";
 
 interface FormData {
   industry: string;
-  markets: string;
-  tone: string;
-  stylePreferences: string;
-  lengthMin: string;
-  lengthMax: string;
+  coined: boolean;
+  compound: boolean;
+  blend: boolean;
+  metaphor: boolean;
   startingLetter: string;
   includeKeywords: string;
   avoidKeywords: string;
+  otherRequirements: string;
+  english: boolean;
+  hinglish: boolean;
 }
 
-const generateBrandNames = (formData: FormData): string[] => {
-  // Mock sophisticated name generation based on input
-  const { industry, tone, startingLetter } = formData;
-  
-  const prefixes = ["Zen", "Nova", "Flux", "Apex", "Vibe", "Echo", "Prism", "Nexus", "Clarity", "Forge"];
-  const suffixes = ["ify", "ly", "io", "hub", "wave", "flow", "rise", "sync", "wise", "core"];
-  const roots = ["brand", "mark", "vista", "shift", "spark", "craft", "mint", "vault", "blend", "pulse"];
-  
-  const coined = ["Vistara", "Zenova", "Fluxion", "Apexify", "Vibrant", "Echora", "Prismly", "Nexify", "Clarix", "Forgepoint"];
-  const metaphors = ["Catalyst", "Horizon", "Summit", "Compass", "Anchor", "Phoenix", "Atlas", "Titan", "Mercury", "Oracle"];
-  const blends = ["Brandwise", "Markflow", "Vistarise", "Shiftsync", "Sparkcore", "Craftly", "Mintvault", "Blendify", "Pulsewave", "Nexpoint"];
-  
-  let pool = [...coined, ...metaphors, ...blends];
-  
-  // Filter by starting letter if specified
-  if (startingLetter) {
-    pool = pool.filter(name => name.toLowerCase().startsWith(startingLetter.toLowerCase()));
-    // If not enough, generate more with that letter
-    if (pool.length < 10) {
-      pool = [
-        ...pool,
-        ...prefixes.filter(p => p.toLowerCase().startsWith(startingLetter.toLowerCase())),
-        ...suffixes.map(s => startingLetter.toUpperCase() + s),
-      ];
-    }
-  }
-  
-  // Adjust for tone
-  if (tone === "premium") {
-    pool = [...metaphors, "Luxora", "Prestigia", "Elitev", "Grandeur", "Magnify", "Regalix", "Primacy", "Sovereign", "Virtus", "Eminence"];
-  } else if (tone === "playful") {
-    pool = ["Zippy", "Bouncy", "Quirk", "Fizzy", "Peppy", "Joyful", "Whimsy", "Bubbles", "Sparkly", "Giggles"];
-  } else if (tone === "rugged") {
-    pool = ["Ironclad", "Granite", "Boulder", "Fortress", "Summit", "Canyon", "Ridge", "Outpost", "Frontier", "Bastion"];
-  }
-  
-  // Shuffle and return 10 unique names
-  const shuffled = pool.sort(() => Math.random() - 0.5);
-  const unique = Array.from(new Set(shuffled));
-  return unique.slice(0, 10);
+interface GeneratedName {
+  id: string;
+  name: string;
+}
+
+const sampleNames = [
+  "Nivaan", "Mekina", "Capriva Estate", "Captiva Estate", "Caplore Estate",
+  "Eolhoscar", "Eovencar", "Eoboltcar", "Eoflexcar", "KPSnickey",
+  "KPShipmark", "Vistara", "Zenova", "Fluxion", "Apexify",
+  "Vibrant", "Echora", "Prismly", "Nexify", "Clarix"
+];
+
+const generateBrandNames = (formData: FormData): GeneratedName[] => {
+  const names = [...sampleNames]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 10)
+    .map((name, idx) => ({
+      id: `name-${Date.now()}-${idx}`,
+      name: name
+    }));
+  return names;
 };
 
 export const BrandNameGenerator = () => {
   const [formData, setFormData] = useState<FormData>({
     industry: "",
-    markets: "India + Global",
-    tone: "modern",
-    stylePreferences: "coined, blend, metaphor",
-    lengthMin: "4",
-    lengthMax: "10",
+    coined: true,
+    compound: true,
+    blend: true,
+    metaphor: true,
     startingLetter: "",
     includeKeywords: "",
     avoidKeywords: "",
+    otherRequirements: "",
+    english: true,
+    hinglish: true,
   });
 
-  const [generatedNames, setGeneratedNames] = useState<string[]>([]);
+  const [generatedNames, setGeneratedNames] = useState<GeneratedName[]>([]);
+  const [wishlist, setWishlist] = useState<GeneratedName[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [currentBatch, setCurrentBatch] = useState(1);
+
+  const handleCheckboxChange = (field: keyof FormData, checked: boolean) => {
+    setFormData(prev => ({ ...prev, [field]: checked }));
+  };
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -84,242 +76,279 @@ export const BrandNameGenerator = () => {
 
   const handleGenerate = () => {
     if (!formData.industry.trim()) {
-      toast.error("Please enter an industry/category");
+      toast.error("Please select an industry");
       return;
     }
 
     setIsGenerating(true);
-    
-    // Simulate AI processing time
     setTimeout(() => {
       const names = generateBrandNames(formData);
       setGeneratedNames(names);
+      setCurrentBatch(1);
       setIsGenerating(false);
       toast.success("10 brand names generated!");
     }, 1500);
   };
 
-  const handleRegenerate = () => {
+  const handleNextBatch = () => {
     setIsGenerating(true);
     setTimeout(() => {
       const names = generateBrandNames(formData);
       setGeneratedNames(names);
+      setCurrentBatch(prev => prev + 1);
       setIsGenerating(false);
-      toast.success("10 new brand names generated!");
+      toast.success("New batch generated!");
     }, 1200);
   };
 
+  const addToWishlist = (name: GeneratedName) => {
+    if (!wishlist.find(w => w.id === name.id)) {
+      setWishlist(prev => [...prev, name]);
+      toast.success(`${name.name} added to wishlist`);
+    }
+  };
+
+  const removeFromWishlist = (id: string) => {
+    setWishlist(prev => prev.filter(w => w.id !== id));
+    toast.success("Removed from wishlist");
+  };
+
+  const checkDomain = (name: string) => {
+    toast.info(`Checking domain for ${name}...`);
+  };
+
   return (
-    <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium mb-6">
-            <Sparkles className="w-4 h-4" />
-            World-Class Brand Naming Engine
+    <div className="min-h-screen bg-background">
+      <div className="max-w-2xl mx-auto p-6">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-10 h-10 rounded-lg bg-[hsl(var(--brand-orange))] flex items-center justify-center">
+            <Square className="w-6 h-6 text-white fill-white" />
           </div>
-          <h1 className="text-5xl sm:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-            Brand Name Generator
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Competition-killing brand names for India & global markets. Distinctive, memorable, and strategically crafted.
-          </p>
+          <h1 className="text-2xl font-bold text-foreground">BrandForge</h1>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Input Form */}
-          <Card className="p-6 shadow-[var(--shadow-elegant)]">
-            <h2 className="text-2xl font-semibold mb-6">Name Generator Inputs</h2>
-            
-            <div className="space-y-5">
-              <div>
-                <Label htmlFor="industry">Industry / Category *</Label>
-                <Input
-                  id="industry"
-                  placeholder="e.g., Tech SaaS, Fashion, Food Delivery"
-                  value={formData.industry}
-                  onChange={(e) => handleInputChange("industry", e.target.value)}
-                  className="mt-1.5"
+        {/* Generation Criteria Card */}
+        <Card className="p-6 mb-6 bg-card border-border">
+          <h2 className="text-lg font-semibold mb-4 text-foreground">Generation Criteria</h2>
+          
+          <div className="space-y-4">
+            {/* Industry */}
+            <div>
+              <Label className="text-sm font-medium text-foreground">Industry / Category</Label>
+              <Select value={formData.industry} onValueChange={(value) => handleInputChange("industry", value)}>
+                <SelectTrigger className="mt-1.5 bg-background">
+                  <SelectValue placeholder="Select an industry (required)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="tech">Technology</SelectItem>
+                  <SelectItem value="fashion">Fashion</SelectItem>
+                  <SelectItem value="food">Food & Beverage</SelectItem>
+                  <SelectItem value="health">Healthcare</SelectItem>
+                  <SelectItem value="finance">Finance</SelectItem>
+                  <SelectItem value="education">Education</SelectItem>
+                  <SelectItem value="realestate">Real Estate</SelectItem>
+                  <SelectItem value="automotive">Automotive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Style Checkboxes */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="coined" 
+                  checked={formData.coined}
+                  onCheckedChange={(checked) => handleCheckboxChange("coined", checked as boolean)}
                 />
+                <Label htmlFor="coined" className="text-sm font-normal cursor-pointer">Coined</Label>
               </div>
-
-              <div>
-                <Label htmlFor="markets">Target Markets</Label>
-                <Input
-                  id="markets"
-                  placeholder="e.g., India + Global, US, Southeast Asia"
-                  value={formData.markets}
-                  onChange={(e) => handleInputChange("markets", e.target.value)}
-                  className="mt-1.5"
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="blend" 
+                  checked={formData.blend}
+                  onCheckedChange={(checked) => handleCheckboxChange("blend", checked as boolean)}
                 />
+                <Label htmlFor="blend" className="text-sm font-normal cursor-pointer">Blend</Label>
               </div>
-
-              <div>
-                <Label htmlFor="tone">Brand Tone</Label>
-                <Select value={formData.tone} onValueChange={(value) => handleInputChange("tone", value)}>
-                  <SelectTrigger className="mt-1.5">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="modern">Modern / Neutral</SelectItem>
-                    <SelectItem value="premium">Premium / Luxury</SelectItem>
-                    <SelectItem value="playful">Playful / Friendly</SelectItem>
-                    <SelectItem value="rugged">Rugged / Bold</SelectItem>
-                    <SelectItem value="professional">Professional / Corporate</SelectItem>
-                    <SelectItem value="innovative">Innovative / Cutting-edge</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="stylePreferences">Style Preferences</Label>
-                <Input
-                  id="stylePreferences"
-                  placeholder="e.g., coined, metaphor, blend"
-                  value={formData.stylePreferences}
-                  onChange={(e) => handleInputChange("stylePreferences", e.target.value)}
-                  className="mt-1.5"
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="compound" 
+                  checked={formData.compound}
+                  onCheckedChange={(checked) => handleCheckboxChange("compound", checked as boolean)}
                 />
+                <Label htmlFor="compound" className="text-sm font-normal cursor-pointer">Compound</Label>
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="lengthMin">Min Length</Label>
-                  <Input
-                    id="lengthMin"
-                    type="number"
-                    min="3"
-                    max="12"
-                    value={formData.lengthMin}
-                    onChange={(e) => handleInputChange("lengthMin", e.target.value)}
-                    className="mt-1.5"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="lengthMax">Max Length</Label>
-                  <Input
-                    id="lengthMax"
-                    type="number"
-                    min="4"
-                    max="15"
-                    value={formData.lengthMax}
-                    onChange={(e) => handleInputChange("lengthMax", e.target.value)}
-                    className="mt-1.5"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="startingLetter">Starting Letter (Optional)</Label>
-                <Input
-                  id="startingLetter"
-                  placeholder="e.g., V"
-                  maxLength={1}
-                  value={formData.startingLetter}
-                  onChange={(e) => handleInputChange("startingLetter", e.target.value)}
-                  className="mt-1.5"
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="metaphor" 
+                  checked={formData.metaphor}
+                  onCheckedChange={(checked) => handleCheckboxChange("metaphor", checked as boolean)}
                 />
+                <Label htmlFor="metaphor" className="text-sm font-normal cursor-pointer">Metaphor</Label>
               </div>
+            </div>
 
-              <div>
-                <Label htmlFor="includeKeywords">Keywords to Include (Optional)</Label>
-                <Textarea
-                  id="includeKeywords"
-                  placeholder="e.g., fast, smart, global"
-                  value={formData.includeKeywords}
-                  onChange={(e) => handleInputChange("includeKeywords", e.target.value)}
-                  className="mt-1.5 resize-none"
-                  rows={2}
+            {/* Starting Letter */}
+            <div>
+              <Label className="text-sm font-medium text-foreground">Starting Letter(s) (optional)</Label>
+              <Input
+                placeholder="e.g., R"
+                value={formData.startingLetter}
+                onChange={(e) => handleInputChange("startingLetter", e.target.value)}
+                className="mt-1.5 bg-background"
+              />
+            </div>
+
+            {/* Include Keywords */}
+            <div>
+              <Label className="text-sm font-medium text-foreground">Include Keywords (optional)</Label>
+              <Input
+                placeholder="e.g., data, cloud"
+                value={formData.includeKeywords}
+                onChange={(e) => handleInputChange("includeKeywords", e.target.value)}
+                className="mt-1.5 bg-background"
+              />
+            </div>
+
+            {/* Avoid Keywords */}
+            <div>
+              <Label className="text-sm font-medium text-foreground">Avoid Keywords (optional)</Label>
+              <Input
+                placeholder="e.g., tech, solutions"
+                value={formData.avoidKeywords}
+                onChange={(e) => handleInputChange("avoidKeywords", e.target.value)}
+                className="mt-1.5 bg-background"
+              />
+            </div>
+
+            {/* Other Requirements */}
+            <div>
+              <Label className="text-sm font-medium text-foreground">Other Requirements (optional)</Label>
+              <Textarea
+                placeholder="e.g., premium, global-friendly"
+                value={formData.otherRequirements}
+                onChange={(e) => handleInputChange("otherRequirements", e.target.value)}
+                className="mt-1.5 bg-background resize-none"
+                rows={3}
+              />
+            </div>
+
+            {/* Language Checkboxes */}
+            <div className="flex gap-6">
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="english" 
+                  checked={formData.english}
+                  onCheckedChange={(checked) => handleCheckboxChange("english", checked as boolean)}
                 />
+                <Label htmlFor="english" className="text-sm font-normal cursor-pointer">English</Label>
               </div>
-
-              <div>
-                <Label htmlFor="avoidKeywords">Keywords to Avoid (Optional)</Label>
-                <Textarea
-                  id="avoidKeywords"
-                  placeholder="e.g., tech, app, soft"
-                  value={formData.avoidKeywords}
-                  onChange={(e) => handleInputChange("avoidKeywords", e.target.value)}
-                  className="mt-1.5 resize-none"
-                  rows={2}
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="hinglish" 
+                  checked={formData.hinglish}
+                  onCheckedChange={(checked) => handleCheckboxChange("hinglish", checked as boolean)}
                 />
+                <Label htmlFor="hinglish" className="text-sm font-normal cursor-pointer">Hinglish</Label>
               </div>
+            </div>
 
+            {/* Buttons */}
+            <div className="grid grid-cols-2 gap-3 pt-2">
               <Button
-                variant="hero"
-                size="lg"
-                className="w-full"
+                className="w-full bg-primary hover:bg-primary/90"
                 onClick={handleGenerate}
                 disabled={isGenerating}
               >
-                {isGenerating ? (
-                  <>
-                    <RefreshCw className="w-5 h-5 animate-spin" />
-                    Generating Names...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-5 h-5" />
-                    Generate 10 Brand Names
-                  </>
-                )}
+                Generate 10 Names
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={handleNextBatch}
+                disabled={isGenerating || generatedNames.length === 0}
+              >
+                Next 10 (new batch)
               </Button>
             </div>
-          </Card>
-
-          {/* Results */}
-          <div className="space-y-6">
-            <Card className="p-6 shadow-[var(--shadow-elegant)]">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-semibold">Generated Names</h2>
-                {generatedNames.length > 0 && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleRegenerate}
-                    disabled={isGenerating}
-                  >
-                    <RefreshCw className={`w-4 h-4 ${isGenerating ? 'animate-spin' : ''}`} />
-                    Regenerate
-                  </Button>
-                )}
-              </div>
-
-              {generatedNames.length === 0 ? (
-                <div className="text-center py-12 text-muted-foreground">
-                  <Sparkles className="w-12 h-12 mx-auto mb-4 opacity-20" />
-                  <p>Fill in the form and click "Generate" to see your brand names</p>
-                </div>
-              ) : (
-                <ol className="space-y-3">
-                  {generatedNames.map((name, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center gap-3 p-4 rounded-lg bg-card border border-border hover:border-accent/50 hover:shadow-[var(--shadow-glow)] transition-all duration-200"
-                    >
-                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm">
-                        {index + 1}
-                      </span>
-                      <span className="text-lg font-medium">{name}</span>
-                    </li>
-                  ))}
-                </ol>
-              )}
-            </Card>
-
-            {generatedNames.length > 0 && (
-              <Card className="p-6 bg-accent/5 border-accent/20">
-                <h3 className="font-semibold text-accent mb-2">Next Steps</h3>
-                <ul className="text-sm text-muted-foreground space-y-1.5">
-                  <li>• Check domain availability for your favorite names</li>
-                  <li>• Verify trademark status in your target markets</li>
-                  <li>• Test pronunciation with native speakers</li>
-                  <li>• Validate social media handle availability</li>
-                </ul>
-              </Card>
-            )}
           </div>
-        </div>
+        </Card>
+
+        {/* Results Card */}
+        <Card className="p-6 mb-6 bg-card border-border">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-foreground">
+              Results (Batch {currentBatch}/1)
+            </h2>
+          </div>
+
+          {generatedNames.length === 0 ? (
+            <p className="text-muted-foreground text-center py-8">
+              Generate to see your 10 names here
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {generatedNames.map((name, idx) => (
+                <div
+                  key={name.id}
+                  className="flex items-center justify-between p-3 rounded-lg bg-background hover:bg-muted/30 cursor-pointer transition-colors"
+                  onClick={() => addToWishlist(name)}
+                >
+                  <span className="text-foreground">
+                    {idx + 1}. {name.name}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="flex justify-between mt-4 pt-4 border-t border-border">
+            <Button variant="ghost" size="sm" disabled>Previous</Button>
+            <Button variant="ghost" size="sm" disabled>Next</Button>
+          </div>
+        </Card>
+
+        {/* Wishlist Card */}
+        <Card className="p-6 bg-card border-border">
+          <h2 className="text-lg font-semibold mb-4 text-foreground">
+            Wishlist ({wishlist.length})
+          </h2>
+
+          {wishlist.length === 0 ? (
+            <p className="text-muted-foreground text-center py-8">
+              Click on generated names to add them to your wishlist
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {wishlist.map((name, idx) => (
+                <div
+                  key={name.id}
+                  className="flex items-center justify-between gap-3"
+                >
+                  <span className="text-foreground flex-1">
+                    {idx + 1}. {name.name}
+                  </span>
+                  <Button
+                    size="sm"
+                    className="bg-primary hover:bg-primary/90 text-xs"
+                    onClick={() => checkDomain(name.name)}
+                  >
+                    Check Domain Availability
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                    onClick={() => removeFromWishlist(name.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
       </div>
     </div>
   );
