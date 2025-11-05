@@ -413,7 +413,7 @@ export const BrandNameGenerator = () => {
         <Card className="p-6 mb-6 bg-card border-border">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-foreground">
-              Results (Batch {currentBatchIndex + 1}/{totalBatches || 1})
+              Results (Batch {totalBatches === 0 ? 0 : currentBatchIndex + 1}/{totalBatches})
             </h2>
           </div>
 
