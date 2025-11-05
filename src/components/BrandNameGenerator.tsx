@@ -138,30 +138,56 @@ export const BrandNameGenerator = () => {
   };
 
   const checkDomain = async (name: GeneratedName) => {
-    // Simulate domain check with random results
-    const randomAvailability = () => Math.random() > 0.5;
+    toast.info(`Checking domain for ${name.name}...`);
     
-    const updatedName = {
-      ...name,
-      domainStatus: {
-        com: randomAvailability(),
-        in: randomAvailability(),
-        ai: randomAvailability(),
-        checked: true
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/check-domain`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ domainName: name.name })
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to check domain');
       }
-    };
 
-    // Update in generated names
-    setGeneratedNames(prev =>
-      prev.map(n => n.id === name.id ? updatedName : n)
-    );
+      const data = await response.json();
+      
+      const updatedName = {
+        ...name,
+        domainStatus: {
+          com: data.availability.com,
+          in: data.availability.in,
+          ai: data.availability.ai,
+          checked: true
+        }
+      };
 
-    // Update in wishlist if present
-    setWishlist(prev =>
-      prev.map(n => n.id === name.id ? updatedName : n)
-    );
+      // Update in generated names
+      setGeneratedNames(prev =>
+        prev.map(n => n.id === name.id ? updatedName : n)
+      );
 
-    toast.success(`Domain checked for ${name.name}`);
+      // Update in wishlist if present
+      setWishlist(prev =>
+        prev.map(n => n.id === name.id ? updatedName : n)
+      );
+
+      const availableCount = Object.values(data.availability).filter(Boolean).length;
+      if (availableCount > 0) {
+        toast.success(`${availableCount} domain(s) available for ${name.name}!`);
+      } else {
+        toast.error(`No domains available for ${name.name}`);
+      }
+    } catch (error) {
+      console.error('Domain check error:', error);
+      toast.error('Failed to check domain availability');
+    }
   };
 
   return (
