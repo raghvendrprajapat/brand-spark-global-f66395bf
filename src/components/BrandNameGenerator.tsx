@@ -78,6 +78,8 @@ export const BrandNameGenerator = () => {
   const [wishlist, setWishlist] = useState<GeneratedName[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentBatch, setCurrentBatch] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   // Force dark mode
   useEffect(() => {
@@ -103,6 +105,7 @@ export const BrandNameGenerator = () => {
       const names = await generateBrandNames(formData);
       setGeneratedNames(names);
       setCurrentBatch(1);
+      setCurrentPage(1);
       toast.success("10 brand names generated!");
     } catch (error) {
       // Error already handled in generateBrandNames
@@ -117,11 +120,30 @@ export const BrandNameGenerator = () => {
       const names = await generateBrandNames(formData);
       setGeneratedNames(names);
       setCurrentBatch(prev => prev + 1);
+      setCurrentPage(1);
       toast.success("New batch generated!");
     } catch (error) {
       // Error already handled in generateBrandNames
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  // Pagination logic
+  const totalPages = Math.ceil(generatedNames.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentNames = generatedNames.slice(startIndex, endIndex);
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(prev => prev + 1);
     }
   };
 
@@ -376,6 +398,11 @@ export const BrandNameGenerator = () => {
             <h2 className="text-lg font-semibold text-foreground">
               Results (Batch {currentBatch}/1)
             </h2>
+            {generatedNames.length > 0 && (
+              <span className="text-sm text-muted-foreground">
+                Page {currentPage} of {totalPages}
+              </span>
+            )}
           </div>
 
           {generatedNames.length === 0 ? (
@@ -384,13 +411,13 @@ export const BrandNameGenerator = () => {
             </p>
           ) : (
             <div className="space-y-2">
-              {generatedNames.map((name, idx) => (
+              {currentNames.map((name, idx) => (
                 <div
                   key={name.id}
                   className="flex items-center justify-between p-3 rounded-lg bg-background border border-border/50"
                 >
                   <span className="text-foreground font-medium">
-                    {idx + 1}. {name.name}
+                    {startIndex + idx + 1}. {name.name}
                   </span>
                   <div className="flex items-center gap-2">
                     <Button
@@ -432,8 +459,24 @@ export const BrandNameGenerator = () => {
           )}
 
           <div className="flex justify-between mt-4 pt-4 border-t border-border">
-            <Button variant="ghost" size="sm" disabled className="text-muted-foreground">Previous</Button>
-            <Button variant="ghost" size="sm" disabled className="text-muted-foreground">Next</Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              disabled={currentPage === 1}
+              onClick={handlePreviousPage}
+              className={currentPage === 1 ? 'text-muted-foreground' : 'text-foreground'}
+            >
+              Previous
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              disabled={currentPage === totalPages || generatedNames.length === 0}
+              onClick={handleNextPage}
+              className={currentPage === totalPages || generatedNames.length === 0 ? 'text-muted-foreground' : 'text-foreground'}
+            >
+              Next
+            </Button>
           </div>
 
           <p className="text-xs text-muted-foreground text-center mt-4 italic">
