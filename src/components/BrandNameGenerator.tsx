@@ -262,9 +262,6 @@ export const BrandNameGenerator = () => {
           <h1 className="text-2xl font-bold text-foreground">BrandForge</h1>
         </div>
 
-        {/* Ad Banner */}
-        <AdBanner slot="8092733736" className="mb-6" />
-
         {/* Generation Criteria Card */}
         <Card className="p-6 mb-6 bg-card border-border">
           <h2 className="text-lg font-semibold mb-4 text-foreground">Generation Criteria</h2>
