@@ -485,10 +485,10 @@ export const BrandNameGenerator = () => {
                     ) : (
                       <Button
                         size="sm"
-                        className="bg-primary hover:bg-primary/90 text-xs px-3"
+                        className="bg-primary hover:bg-primary/90 text-xs px-2"
                         onClick={() => checkDomain(name)}
                       >
-                        Check Domain Availability
+                        Check
                       </Button>
                     )}
                   </div>
