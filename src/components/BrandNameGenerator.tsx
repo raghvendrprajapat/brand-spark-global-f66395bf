@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Trash2, Heart, X, Check } from "lucide-react";
 import { toast } from "sonner";
 import appIcon from "@/assets/app-icon.png";
+import AdBanner from "./AdBanner";
 
 interface FormData {
   industry: string;
@@ -238,6 +239,9 @@ export const BrandNameGenerator = () => {
           <img src={appIcon} alt="BrandForge" className="w-10 h-10" />
           <h1 className="text-2xl font-bold text-foreground">BrandForge</h1>
         </div>
+
+        {/* Ad Banner */}
+        <AdBanner slot="1387724589" className="mb-6" />
 
         {/* Generation Criteria Card */}
         <Card className="p-6 mb-6 bg-card border-border">
