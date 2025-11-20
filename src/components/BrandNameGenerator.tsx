@@ -488,7 +488,7 @@ export const BrandNameGenerator = () => {
                         className="bg-primary hover:bg-primary/90 text-xs px-2"
                         onClick={() => checkDomain(name)}
                       >
-                        Check
+                        Check Domain Availability
                       </Button>
                     )}
                   </div>
