@@ -99,6 +99,11 @@ export const BrandNameGenerator = () => {
   };
 
   const handleGenerate = async () => {
+    if (!navigator.onLine) {
+      toast.error("You are offline");
+      return;
+    }
+
     if (!formData.industry.trim()) {
       toast.error("Please select an industry");
       return;
@@ -127,6 +132,11 @@ export const BrandNameGenerator = () => {
   };
 
   const handleNextBatch = async () => {
+    if (!navigator.onLine) {
+      toast.error("You are offline");
+      return;
+    }
+
     setIsGenerating(true);
     try {
       const names = await generateBrandNames(formData);
