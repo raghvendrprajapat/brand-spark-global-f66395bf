@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Trash2, Heart, X, Check } from "lucide-react";
+import { Trash2, Heart, X, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import appIcon from "@/assets/app-icon.png";
 import AdBanner from "./AdBanner";
@@ -417,7 +417,14 @@ export const BrandNameGenerator = () => {
                 onClick={handleGenerate}
                 disabled={isGenerating}
               >
-                Generate 10 Names
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  "Generate 10 Names"
+                )}
               </Button>
               <Button
                 variant="outline"
@@ -425,7 +432,14 @@ export const BrandNameGenerator = () => {
                 onClick={handleNextBatch}
                 disabled={isGenerating || allBatches.length === 0}
               >
-                Next 10 (new batch)
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  "Next 10 (new batch)"
+                )}
               </Button>
             </div>
           </div>
@@ -439,7 +453,12 @@ export const BrandNameGenerator = () => {
             </h2>
           </div>
 
-          {currentBatch.length === 0 ? (
+          {isGenerating && currentBatch.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 gap-4">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="text-muted-foreground text-sm">Generating brand names...</p>
+            </div>
+          ) : currentBatch.length === 0 ? (
             <p className="text-muted-foreground text-center py-8">
               Generate to see your 10 names here
             </p>
