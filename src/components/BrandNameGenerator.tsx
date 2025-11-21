@@ -255,16 +255,16 @@ export const BrandNameGenerator = () => {
   return (
     <div className="min-h-screen bg-background">
       {showInterstitial && <InterstitialAd />}
-      <div className="max-w-2xl mx-auto p-6">
+      <div className="max-w-2xl mx-auto p-3 sm:p-6">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
-          <img src={appIcon} alt="BrandForge" className="w-10 h-10" />
-          <h1 className="text-2xl font-bold text-foreground">BrandForge</h1>
+        <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-8">
+          <img src={appIcon} alt="BrandForge" className="w-8 h-8 sm:w-10 sm:h-10" />
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">BrandForge</h1>
         </div>
 
         {/* Generation Criteria Card */}
-        <Card className="p-6 mb-6 bg-card border-border">
-          <h2 className="text-lg font-semibold mb-4 text-foreground">Generation Criteria</h2>
+        <Card className="p-3 sm:p-6 mb-4 sm:mb-6 bg-card border-border">
+          <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-foreground">Generation Criteria</h2>
           
           <div className="space-y-4">
             {/* Industry */}
@@ -310,7 +310,7 @@ export const BrandNameGenerator = () => {
             </div>
 
             {/* Style Checkboxes */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <div className="flex items-center space-x-2">
                 <Checkbox 
                   id="coined" 
@@ -411,7 +411,7 @@ export const BrandNameGenerator = () => {
             </div>
 
             {/* Buttons */}
-            <div className="grid grid-cols-2 gap-3 pt-2">
+            <div className="flex flex-col sm:grid sm:grid-cols-2 gap-2 sm:gap-3 pt-2">
               <Button
                 className="w-full bg-primary hover:bg-primary/90"
                 onClick={handleGenerate}
@@ -432,9 +432,9 @@ export const BrandNameGenerator = () => {
         </Card>
 
         {/* Results Card */}
-        <Card className="p-6 mb-6 bg-card border-border">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-foreground">
+        <Card className="p-3 sm:p-6 mb-4 sm:mb-6 bg-card border-border">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <h2 className="text-base sm:text-lg font-semibold text-foreground">
               Results (Batch {totalBatches === 0 ? 0 : currentBatchIndex + 1}/{totalBatches})
             </h2>
           </div>
@@ -448,12 +448,12 @@ export const BrandNameGenerator = () => {
               {currentBatch.map((name, idx) => (
                 <div
                   key={name.id}
-                  className="flex items-center justify-between p-3 rounded-lg bg-background border border-border/50"
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2 sm:p-3 rounded-lg bg-background border border-border/50"
                 >
-                  <span className="text-foreground font-medium">
+                  <span className="text-sm sm:text-base text-foreground font-medium">
                     {idx + 1}. {name.name}
                   </span>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <Button
                       size="icon"
                       variant="ghost"
@@ -468,24 +468,24 @@ export const BrandNameGenerator = () => {
                         <span className="text-xs text-muted-foreground">Checking...</span>
                       </div>
                     ) : name.domainStatus?.checked ? (
-                      <div className="flex gap-1">
-                        <div className={`px-2 py-1 rounded text-xs font-medium flex items-center gap-1 ${name.domainStatus.com ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
-                          {name.domainStatus.com ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                      <div className="flex gap-1 flex-wrap">
+                        <div className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium flex items-center gap-1 ${name.domainStatus.com ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                          {name.domainStatus.com ? <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> : <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />}
                           .com
                         </div>
-                        <div className={`px-2 py-1 rounded text-xs font-medium flex items-center gap-1 ${name.domainStatus.in ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
-                          {name.domainStatus.in ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                        <div className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium flex items-center gap-1 ${name.domainStatus.in ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                          {name.domainStatus.in ? <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> : <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />}
                           .in
                         </div>
-                        <div className={`px-2 py-1 rounded text-xs font-medium flex items-center gap-1 ${name.domainStatus.ai ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
-                          {name.domainStatus.ai ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                        <div className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium flex items-center gap-1 ${name.domainStatus.ai ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                          {name.domainStatus.ai ? <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> : <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />}
                           .ai
                         </div>
                       </div>
                     ) : (
                       <Button
                         size="sm"
-                        className="bg-primary hover:bg-primary/90 text-xs px-2"
+                        className="bg-primary hover:bg-primary/90 text-[10px] sm:text-xs px-2"
                         onClick={() => checkDomain(name)}
                       >
                         Check Domain Availability
@@ -524,8 +524,8 @@ export const BrandNameGenerator = () => {
         </Card>
 
         {/* Wishlist Card */}
-        <Card className="p-6 bg-card border-border">
-          <h2 className="text-lg font-semibold mb-4 text-foreground">
+        <Card className="p-3 sm:p-6 bg-card border-border">
+          <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-foreground">
             Wishlist ({wishlist.length})
           </h2>
 
@@ -538,36 +538,36 @@ export const BrandNameGenerator = () => {
               {wishlist.map((name, idx) => (
                 <div
                   key={name.id}
-                  className="flex items-center justify-between gap-3"
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
                 >
-                  <span className="text-foreground font-medium flex-1">
+                  <span className="text-sm sm:text-base text-foreground font-medium flex-1">
                     {idx + 1}. {name.name}
                   </span>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     {name.isCheckingDomain ? (
                       <div className="flex items-center gap-2 px-3 py-1">
                         <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                         <span className="text-xs text-muted-foreground">Checking...</span>
                       </div>
                     ) : name.domainStatus?.checked ? (
-                      <div className="flex gap-1">
-                        <div className={`px-2 py-1 rounded text-xs font-medium flex items-center gap-1 ${name.domainStatus.com ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
-                          {name.domainStatus.com ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                      <div className="flex gap-1 flex-wrap">
+                        <div className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium flex items-center gap-1 ${name.domainStatus.com ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                          {name.domainStatus.com ? <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> : <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />}
                           .com
                         </div>
-                        <div className={`px-2 py-1 rounded text-xs font-medium flex items-center gap-1 ${name.domainStatus.in ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
-                          {name.domainStatus.in ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                        <div className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium flex items-center gap-1 ${name.domainStatus.in ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                          {name.domainStatus.in ? <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> : <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />}
                           .in
                         </div>
-                        <div className={`px-2 py-1 rounded text-xs font-medium flex items-center gap-1 ${name.domainStatus.ai ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
-                          {name.domainStatus.ai ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                        <div className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium flex items-center gap-1 ${name.domainStatus.ai ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                          {name.domainStatus.ai ? <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> : <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />}
                           .ai
                         </div>
                       </div>
                     ) : (
                       <Button
                         size="sm"
-                        className="bg-primary hover:bg-primary/90 text-xs px-3"
+                        className="bg-primary hover:bg-primary/90 text-[10px] sm:text-xs px-2"
                         onClick={() => checkDomain(name)}
                       >
                         Check Domain Availability
