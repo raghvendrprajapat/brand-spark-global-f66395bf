@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,11 +6,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Trash2, Heart, X, Check, Loader2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Trash2, Heart, X, Check, Loader2, Sun, Moon, Shield } from "lucide-react";
 import { toast } from "sonner";
 import appIcon from "@/assets/app-icon.png";
 import AdBanner from "./AdBanner";
 import InterstitialAd from "./InterstitialAd";
+import { useTheme } from "@/hooks/use-theme";
 
 interface FormData {
   industry: string;
@@ -84,11 +86,13 @@ export const BrandNameGenerator = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showInterstitial, setShowInterstitial] = useState(false);
   const [generationCount, setGenerationCount] = useState(0);
+  
+  const { theme, toggleTheme } = useTheme();
 
-  // Force dark mode
-  useEffect(() => {
-    document.documentElement.classList.add('dark');
-  }, []);
+  const handlePrivacyPolicy = () => {
+    // Opens in system browser or new tab
+    window.open("https://example.com/privacy-policy", "_blank");
+  };
 
   const handleCheckboxChange = (field: keyof FormData, checked: boolean) => {
     setFormData(prev => ({ ...prev, [field]: checked }));
@@ -267,9 +271,35 @@ export const BrandNameGenerator = () => {
       {showInterstitial && <InterstitialAd />}
       <div className="max-w-2xl mx-auto p-3 sm:p-6">
         {/* Header */}
-        <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-8">
-          <img src={appIcon} alt="BrandForge" className="w-8 h-8 sm:w-10 sm:h-10" />
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">BrandForge</h1>
+        <div className="flex items-center justify-between mb-4 sm:mb-8">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <img src={appIcon} alt="BrandForge" className="w-8 h-8 sm:w-10 sm:h-10" />
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">BrandForge</h1>
+          </div>
+          
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Theme Toggle */}
+            <div className="flex items-center gap-2">
+              <Sun className="h-4 w-4 text-muted-foreground" />
+              <Switch
+                checked={theme === "dark"}
+                onCheckedChange={toggleTheme}
+                aria-label="Toggle theme"
+              />
+              <Moon className="h-4 w-4 text-muted-foreground" />
+            </div>
+            
+            {/* Privacy Policy */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handlePrivacyPolicy}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <Shield className="h-4 w-4 sm:mr-1" />
+              <span className="hidden sm:inline">Privacy</span>
+            </Button>
+          </div>
         </div>
 
         {/* Generation Criteria Card */}
