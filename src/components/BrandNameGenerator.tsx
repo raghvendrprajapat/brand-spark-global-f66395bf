@@ -90,8 +90,7 @@ export const BrandNameGenerator = () => {
   const { theme, toggleTheme } = useTheme();
 
   const handlePrivacyPolicy = () => {
-    // Opens in system browser or new tab
-    window.open("https://example.com/privacy-policy", "_blank");
+    window.open("https://raghvendrprajapat.github.io/Brandforge-privacy-policy/", "_blank");
   };
 
   const handleCheckboxChange = (field: keyof FormData, checked: boolean) => {
