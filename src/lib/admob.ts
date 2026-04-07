@@ -1,0 +1,49 @@
+import { AdMob, BannerAdOptions, BannerAdSize, BannerAdPosition, AdMobBannerSize, InterstitialAdPluginEvents, AdOptions } from '@capacitor-community/admob';
+
+// Test Ad IDs
+const BANNER_AD_ID = 'ca-app-pub-3940256099942544/6300978111';
+const INTERSTITIAL_AD_ID = 'ca-app-pub-3940256099942544/1033173712';
+
+let admobInitialized = false;
+
+export async function initializeAdMob(): Promise<void> {
+  if (admobInitialized) return;
+  
+  try {
+    await AdMob.initialize({
+      initializeForTesting: true,
+    });
+    admobInitialized = true;
+    console.log('AdMob initialized successfully');
+  } catch (error) {
+    console.error('AdMob initialization failed:', error);
+  }
+}
+
+export async function showBannerAd(): Promise<void> {
+  try {
+    const options: BannerAdOptions = {
+      adId: BANNER_AD_ID,
+      adSize: BannerAdSize.ADAPTIVE_BANNER,
+      position: BannerAdPosition.BOTTOM_CENTER,
+      margin: 0,
+    };
+    await AdMob.showBanner(options);
+    console.log('Banner ad shown');
+  } catch (error) {
+    console.error('Banner ad error:', error);
+  }
+}
+
+export async function showInterstitialAd(): Promise<void> {
+  try {
+    const options: AdOptions = {
+      adId: INTERSTITIAL_AD_ID,
+    };
+    await AdMob.prepareInterstitial(options);
+    await AdMob.showInterstitial();
+    console.log('Interstitial ad shown');
+  } catch (error) {
+    console.error('Interstitial ad error:', error);
+  }
+}
