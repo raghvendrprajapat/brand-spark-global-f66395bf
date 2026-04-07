@@ -10,9 +10,8 @@ import { Switch } from "@/components/ui/switch";
 import { Trash2, Heart, X, Check, Loader2, Sun, Moon, Shield } from "lucide-react";
 import { toast } from "sonner";
 import appIcon from "@/assets/app-icon.png";
-import AdBanner from "./AdBanner";
-import InterstitialAd from "./InterstitialAd";
 import { useTheme } from "@/hooks/use-theme";
+import { showInterstitialAd } from "@/lib/admob";
 
 interface FormData {
   industry: string;
