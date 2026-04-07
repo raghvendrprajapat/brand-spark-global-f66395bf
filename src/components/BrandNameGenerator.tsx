@@ -10,9 +10,8 @@ import { Switch } from "@/components/ui/switch";
 import { Trash2, Heart, X, Check, Loader2, Sun, Moon, Shield } from "lucide-react";
 import { toast } from "sonner";
 import appIcon from "@/assets/app-icon.png";
-import AdBanner from "./AdBanner";
-import InterstitialAd from "./InterstitialAd";
 import { useTheme } from "@/hooks/use-theme";
+import { showInterstitialAd } from "@/lib/admob";
 
 interface FormData {
   industry: string;
@@ -84,7 +83,7 @@ export const BrandNameGenerator = () => {
   const [currentBatchIndex, setCurrentBatchIndex] = useState(0);
   const [wishlist, setWishlist] = useState<GeneratedName[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [showInterstitial, setShowInterstitial] = useState(false);
+  
   const [generationCount, setGenerationCount] = useState(0);
   
   const { theme, toggleTheme } = useTheme();
@@ -122,8 +121,7 @@ export const BrandNameGenerator = () => {
       const newCount = generationCount + 1;
       setGenerationCount(newCount);
       if (newCount % 3 === 0) {
-        setShowInterstitial(true);
-        setTimeout(() => setShowInterstitial(false), 100);
+        showInterstitialAd();
       }
       
       toast.success("10 brand names generated!");
@@ -150,8 +148,7 @@ export const BrandNameGenerator = () => {
       const newCount = generationCount + 1;
       setGenerationCount(newCount);
       if (newCount % 3 === 0) {
-        setShowInterstitial(true);
-        setTimeout(() => setShowInterstitial(false), 100);
+        showInterstitialAd();
       }
       
       toast.success("New batch generated!");
@@ -267,7 +264,7 @@ export const BrandNameGenerator = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {showInterstitial && <InterstitialAd />}
+      
       <div className="max-w-2xl mx-auto p-3 sm:p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-4 sm:mb-8">
