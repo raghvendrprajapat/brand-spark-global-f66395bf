@@ -265,7 +265,7 @@ export const BrandNameGenerator = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {showInterstitial && <InterstitialAd />}
+      
       <div className="max-w-2xl mx-auto p-3 sm:p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-4 sm:mb-8">
