@@ -83,7 +83,7 @@ export const BrandNameGenerator = () => {
   const [currentBatchIndex, setCurrentBatchIndex] = useState(0);
   const [wishlist, setWishlist] = useState<GeneratedName[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [showInterstitial, setShowInterstitial] = useState(false);
+  
   const [generationCount, setGenerationCount] = useState(0);
   
   const { theme, toggleTheme } = useTheme();
@@ -148,8 +148,7 @@ export const BrandNameGenerator = () => {
       const newCount = generationCount + 1;
       setGenerationCount(newCount);
       if (newCount % 3 === 0) {
-        setShowInterstitial(true);
-        setTimeout(() => setShowInterstitial(false), 100);
+        showInterstitialAd();
       }
       
       toast.success("New batch generated!");
