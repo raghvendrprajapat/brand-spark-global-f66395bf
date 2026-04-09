@@ -148,7 +148,7 @@ export const BrandNameGenerator = () => {
       const newCount = generationCount + 1;
       setGenerationCount(newCount);
       if (newCount % 3 === 0) {
-        showInterstitialAd();
+        showInterstitialAd().catch(() => {});
       }
       
       toast.success("New batch generated!");
