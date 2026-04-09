@@ -121,7 +121,7 @@ export const BrandNameGenerator = () => {
       const newCount = generationCount + 1;
       setGenerationCount(newCount);
       if (newCount % 3 === 0) {
-        showInterstitialAd();
+        showInterstitialAd().catch(() => {});
       }
       
       toast.success("10 brand names generated!");
