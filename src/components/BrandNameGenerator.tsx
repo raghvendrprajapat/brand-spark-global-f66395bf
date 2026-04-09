@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -83,8 +83,12 @@ export const BrandNameGenerator = () => {
   const [currentBatchIndex, setCurrentBatchIndex] = useState(0);
   const [wishlist, setWishlist] = useState<GeneratedName[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  
-  const [generationCount, setGenerationCount] = useState(0);
+
+  // Show banner ad on mount, hide on unmount
+  useEffect(() => {
+    showBannerAd();
+    return () => { hideBannerAd(); };
+  }, []);
   
   const { theme, toggleTheme } = useTheme();
 
@@ -117,12 +121,8 @@ export const BrandNameGenerator = () => {
       setAllBatches([names]);
       setCurrentBatchIndex(0);
       
-      // Show interstitial ad every 3 generations
-      const newCount = generationCount + 1;
-      setGenerationCount(newCount);
-      if (newCount % 3 === 0) {
-        showInterstitialAd().catch(() => {});
-      }
+      // Show interstitial ad (handles 3rd generation counter internally)
+      showInterstitialAd().catch(() => {});
       
       toast.success("10 brand names generated!");
     } catch (error) {
@@ -144,12 +144,8 @@ export const BrandNameGenerator = () => {
       setAllBatches(prev => [...prev, names]);
       setCurrentBatchIndex(prev => prev + 1);
       
-      // Show interstitial ad every 3 generations
-      const newCount = generationCount + 1;
-      setGenerationCount(newCount);
-      if (newCount % 3 === 0) {
-        showInterstitialAd().catch(() => {});
-      }
+      // Show interstitial ad (handles 3rd generation counter internally)
+      showInterstitialAd().catch(() => {});
       
       toast.success("New batch generated!");
     } catch (error) {
