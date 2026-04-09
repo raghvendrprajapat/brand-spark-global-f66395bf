@@ -11,7 +11,7 @@ import { Trash2, Heart, X, Check, Loader2, Sun, Moon, Shield } from "lucide-reac
 import { toast } from "sonner";
 import appIcon from "@/assets/app-icon.png";
 import { useTheme } from "@/hooks/use-theme";
-import { showInterstitialAd } from "@/lib/admob";
+import { showInterstitialAd, showBannerAd, hideBannerAd } from "@/lib/admob";
 
 interface FormData {
   industry: string;

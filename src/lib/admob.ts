@@ -5,19 +5,17 @@ const BANNER_AD_ID = 'ca-app-pub-3940256099942544/6300978111';
 const INTERSTITIAL_AD_ID = 'ca-app-pub-3940256099942544/1033173712';
 
 let admobInitialized = false;
+let generationCount = 0;
 
 export async function initializeAdMob(): Promise<void> {
   if (admobInitialized) return;
-  
   if (!Capacitor.isNativePlatform()) {
     console.log('AdMob skipped: not a native platform');
     return;
   }
 
   try {
-    await AdMob.initialize({
-      initializeForTesting: true,
-    });
+    await AdMob.initialize({ initializeForTesting: true });
     admobInitialized = true;
     console.log('AdMob initialized successfully');
   } catch (error) {
@@ -42,14 +40,27 @@ export async function showBannerAd(): Promise<void> {
   }
 }
 
-export async function showInterstitialAd(): Promise<void> {
+export async function hideBannerAd(): Promise<void> {
   if (!Capacitor.isNativePlatform() || !admobInitialized) return;
 
   try {
-    const options: AdOptions = {
-      adId: INTERSTITIAL_AD_ID,
-    };
-    await AdMob.prepareInterstitial(options);
+    await AdMob.hideBanner();
+    console.log('Banner ad hidden');
+  } catch (error) {
+    console.error('Banner ad hide error:', error);
+  }
+}
+
+export async function showInterstitialAd(): Promise<void> {
+  if (!Capacitor.isNativePlatform() || !admobInitialized) return;
+
+  generationCount++;
+  console.log(`Generation count: ${generationCount}`);
+
+  if (generationCount % 3 !== 0) return;
+
+  try {
+    await AdMob.prepareInterstitial({ adId: INTERSTITIAL_AD_ID });
   } catch (error) {
     console.error('Interstitial prepare error:', error);
     return;
