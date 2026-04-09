@@ -1,6 +1,6 @@
-import { AdMob, BannerAdOptions, BannerAdSize, BannerAdPosition, AdMobBannerSize, InterstitialAdPluginEvents, AdOptions } from '@capacitor-community/admob';
+import { AdMob, BannerAdOptions, BannerAdSize, BannerAdPosition, AdOptions } from '@capacitor-community/admob';
+import { Capacitor } from '@capacitor/core';
 
-// Test Ad IDs
 const BANNER_AD_ID = 'ca-app-pub-3940256099942544/6300978111';
 const INTERSTITIAL_AD_ID = 'ca-app-pub-3940256099942544/1033173712';
 
@@ -9,6 +9,11 @@ let admobInitialized = false;
 export async function initializeAdMob(): Promise<void> {
   if (admobInitialized) return;
   
+  if (!Capacitor.isNativePlatform()) {
+    console.log('AdMob skipped: not a native platform');
+    return;
+  }
+
   try {
     await AdMob.initialize({
       initializeForTesting: true,
@@ -21,6 +26,8 @@ export async function initializeAdMob(): Promise<void> {
 }
 
 export async function showBannerAd(): Promise<void> {
+  if (!Capacitor.isNativePlatform() || !admobInitialized) return;
+
   try {
     const options: BannerAdOptions = {
       adId: BANNER_AD_ID,
@@ -36,14 +43,22 @@ export async function showBannerAd(): Promise<void> {
 }
 
 export async function showInterstitialAd(): Promise<void> {
+  if (!Capacitor.isNativePlatform() || !admobInitialized) return;
+
   try {
     const options: AdOptions = {
       adId: INTERSTITIAL_AD_ID,
     };
     await AdMob.prepareInterstitial(options);
+  } catch (error) {
+    console.error('Interstitial prepare error:', error);
+    return;
+  }
+
+  try {
     await AdMob.showInterstitial();
     console.log('Interstitial ad shown');
   } catch (error) {
-    console.error('Interstitial ad error:', error);
+    console.error('Interstitial show error:', error);
   }
 }
