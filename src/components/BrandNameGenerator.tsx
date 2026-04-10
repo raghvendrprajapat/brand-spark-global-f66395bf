@@ -497,52 +497,61 @@ export const BrandNameGenerator = () => {
           ) : (
             <div className="space-y-2">
               {currentBatch.map((name, idx) => (
-                <div
-                  key={name.id}
-                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2 sm:p-3 rounded-lg bg-background border border-border/50"
-                >
-                  <span className="text-sm sm:text-base text-foreground font-medium">
-                    {idx + 1}. {name.name}
-                  </span>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className={`h-8 w-8 ${wishlist.find(w => w.id === name.id) ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'}`}
-                      onClick={() => addToWishlist(name)}
-                    >
-                      <Heart className={`h-4 w-4 ${wishlist.find(w => w.id === name.id) ? 'fill-current' : ''}`} />
-                    </Button>
-                    {name.isCheckingDomain ? (
-                      <div className="flex items-center gap-2 px-3 py-1">
-                        <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                        <span className="text-xs text-muted-foreground">Checking...</span>
-                      </div>
-                    ) : name.domainStatus?.checked ? (
-                      <div className="flex gap-1 flex-wrap">
-                        <div className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium flex items-center gap-1 ${name.domainStatus.com ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
-                          {name.domainStatus.com ? <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> : <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />}
-                          .com
-                        </div>
-                        <div className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium flex items-center gap-1 ${name.domainStatus.in ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
-                          {name.domainStatus.in ? <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> : <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />}
-                          .in
-                        </div>
-                        <div className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium flex items-center gap-1 ${name.domainStatus.ai ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
-                          {name.domainStatus.ai ? <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> : <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />}
-                          .ai
-                        </div>
-                      </div>
-                    ) : (
+                <div key={name.id}>
+                  <div
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-2 sm:p-3 rounded-lg bg-background border border-border/50"
+                  >
+                    <span className="text-sm sm:text-base text-foreground font-medium">
+                      {idx + 1}. {name.name}
+                    </span>
+                    <div className="flex items-center gap-2 flex-wrap">
                       <Button
-                        size="sm"
-                        className="bg-primary hover:bg-primary/90 text-[10px] sm:text-xs px-2"
-                        onClick={() => checkDomain(name)}
+                        size="icon"
+                        variant="ghost"
+                        className={`h-8 w-8 ${wishlist.find(w => w.id === name.id) ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'}`}
+                        onClick={() => addToWishlist(name)}
                       >
-                        Check Domain Availability
+                        <Heart className={`h-4 w-4 ${wishlist.find(w => w.id === name.id) ? 'fill-current' : ''}`} />
                       </Button>
-                    )}
+                      {name.isCheckingDomain ? (
+                        <div className="flex items-center gap-2 px-3 py-1">
+                          <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                          <span className="text-xs text-muted-foreground">Checking...</span>
+                        </div>
+                      ) : name.domainStatus?.checked ? (
+                        <div className="flex gap-1 flex-wrap">
+                          <div className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium flex items-center gap-1 ${name.domainStatus.com ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                            {name.domainStatus.com ? <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> : <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />}
+                            .com
+                          </div>
+                          <div className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium flex items-center gap-1 ${name.domainStatus.in ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                            {name.domainStatus.in ? <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> : <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />}
+                            .in
+                          </div>
+                          <div className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium flex items-center gap-1 ${name.domainStatus.ai ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                            {name.domainStatus.ai ? <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> : <X className="h-2.5 w-2.5 sm:h-3 sm:w-3" />}
+                            .ai
+                          </div>
+                        </div>
+                      ) : (
+                        <Button
+                          size="sm"
+                          className="bg-primary hover:bg-primary/90 text-[10px] sm:text-xs px-2"
+                          onClick={() => checkDomain(name)}
+                        >
+                          Check Domain Availability
+                        </Button>
+                      )}
+                    </div>
                   </div>
+                  {/* In-list banner ads after names 1, 5, and 7 (idx 0, 4, 6) */}
+                  {[0, 4, 6].includes(idx) && (
+                    <div className="flex justify-center py-2">
+                      <div className="w-full max-w-[320px] h-[50px] bg-muted/30 rounded border border-border/30 flex items-center justify-center">
+                        <span className="text-[10px] text-muted-foreground">Ad</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

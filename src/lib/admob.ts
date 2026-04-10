@@ -1,8 +1,8 @@
 import { AdMob, BannerAdOptions, BannerAdSize, BannerAdPosition, AdOptions } from '@capacitor-community/admob';
 import { Capacitor } from '@capacitor/core';
 
-const BANNER_AD_ID = 'ca-app-pub-3940256099942544/6300978111';
-const INTERSTITIAL_AD_ID = 'ca-app-pub-3940256099942544/1033173712';
+const BANNER_AD_ID = 'ca-app-pub-5449536249633870/8092733376';
+const INTERSTITIAL_AD_ID = 'ca-app-pub-5449536249633870/9158403394';
 
 let admobInitialized = false;
 let generationCount = 0;
@@ -15,7 +15,7 @@ export async function initializeAdMob(): Promise<void> {
   }
 
   try {
-    await AdMob.initialize({ initializeForTesting: true });
+    await AdMob.initialize();
     admobInitialized = true;
     console.log('AdMob initialized successfully');
   } catch (error) {
