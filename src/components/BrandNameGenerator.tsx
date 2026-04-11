@@ -116,20 +116,19 @@ export const BrandNameGenerator = () => {
     }
 
     setIsGenerating(true);
-    try {
-      const names = await generateBrandNames(formData);
+
+    // Show interstitial ad instantly + generate names in background simultaneously
+    const [, names] = await Promise.all([
+      showInterstitialAd().catch(() => false),
+      generateBrandNames(formData).catch(() => null),
+    ]);
+
+    if (names) {
       setAllBatches([names]);
       setCurrentBatchIndex(0);
-      
-      // Show interstitial ad (handles 3rd generation counter internally)
-      showInterstitialAd().catch(() => {});
-      
       toast.success("10 brand names generated!");
-    } catch (error) {
-      // Error already handled in generateBrandNames
-    } finally {
-      setIsGenerating(false);
     }
+    setIsGenerating(false);
   };
 
   const handleNextBatch = async () => {
@@ -139,20 +138,19 @@ export const BrandNameGenerator = () => {
     }
 
     setIsGenerating(true);
-    try {
-      const names = await generateBrandNames(formData);
+
+    // Show interstitial ad instantly + generate names in background simultaneously
+    const [, names] = await Promise.all([
+      showInterstitialAd().catch(() => false),
+      generateBrandNames(formData).catch(() => null),
+    ]);
+
+    if (names) {
       setAllBatches(prev => [...prev, names]);
       setCurrentBatchIndex(prev => prev + 1);
-      
-      // Show interstitial ad (handles 3rd generation counter internally)
-      showInterstitialAd().catch(() => {});
-      
       toast.success("New batch generated!");
-    } catch (error) {
-      // Error already handled in generateBrandNames
-    } finally {
-      setIsGenerating(false);
     }
+    setIsGenerating(false);
   };
 
   const handlePreviousBatch = () => {
