@@ -5,7 +5,7 @@ const BANNER_AD_ID = 'ca-app-pub-5449536249633870/8092733376';
 const INTERSTITIAL_AD_ID = 'ca-app-pub-5449536249633870/9158403394';
 
 let admobInitialized = false;
-let generationCount = 0;
+
 
 export async function initializeAdMob(): Promise<void> {
   if (admobInitialized) return;
