@@ -5,7 +5,7 @@ const BANNER_AD_ID = 'ca-app-pub-5449536249633870/8092733376';
 const INTERSTITIAL_AD_ID = 'ca-app-pub-5449536249633870/9158403394';
 
 let admobInitialized = false;
-let generationCount = 0;
+
 
 export async function initializeAdMob(): Promise<void> {
   if (admobInitialized) return;
@@ -30,7 +30,7 @@ export async function showBannerAd(): Promise<void> {
     const options: BannerAdOptions = {
       adId: BANNER_AD_ID,
       adSize: BannerAdSize.ADAPTIVE_BANNER,
-      position: BannerAdPosition.BOTTOM_CENTER,
+      position: BannerAdPosition.TOP_CENTER,
       margin: 0,
     };
     await AdMob.showBanner(options);
@@ -53,11 +53,6 @@ export async function hideBannerAd(): Promise<void> {
 
 export async function showInterstitialAd(): Promise<void> {
   if (!Capacitor.isNativePlatform() || !admobInitialized) return;
-
-  generationCount++;
-  console.log(`Generation count: ${generationCount}`);
-
-  if (generationCount % 3 !== 0) return;
 
   try {
     await AdMob.prepareInterstitial({ adId: INTERSTITIAL_AD_ID });
