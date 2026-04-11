@@ -488,7 +488,7 @@ export const BrandNameGenerator = () => {
           {isGenerating && currentBatch.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 gap-4">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-muted-foreground text-sm">Generating brand names...</p>
+              <p className="text-muted-foreground text-sm"><p className="text-muted-foreground text-sm">Generating business names...</p></p>
             </div>
           ) : currentBatch.length === 0 ? (
             <p className="text-muted-foreground text-center py-8">
@@ -544,14 +544,6 @@ export const BrandNameGenerator = () => {
                       )}
                     </div>
                   </div>
-                  {/* In-list banner ads after names 1, 5, and 7 (idx 0, 4, 6) */}
-                  {[0, 4, 6].includes(idx) && (
-                    <div className="flex justify-center py-2">
-                      <div className="w-full max-w-[320px] h-[50px] bg-muted/30 rounded border border-border/30 flex items-center justify-center">
-                        <span className="text-[10px] text-muted-foreground">Ad</span>
-                      </div>
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
