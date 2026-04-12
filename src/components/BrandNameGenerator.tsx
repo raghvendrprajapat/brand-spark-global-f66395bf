@@ -104,6 +104,12 @@ export const BrandNameGenerator = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const appendBatch = (names: GeneratedName[]) => {
+    const nextBatchIndex = allBatches.length;
+    setAllBatches(prev => [...prev, names]);
+    setCurrentBatchIndex(nextBatchIndex);
+  };
+
   const handleGenerate = async () => {
     if (!navigator.onLine) {
       toast.error("You are offline");
@@ -124,9 +130,8 @@ export const BrandNameGenerator = () => {
     ]);
 
     if (names) {
-      setAllBatches([names]);
-      setCurrentBatchIndex(0);
-      toast.success("10 brand names generated!");
+      appendBatch(names);
+      toast.success("10 business names generated!");
     }
     setIsGenerating(false);
   };
@@ -146,8 +151,7 @@ export const BrandNameGenerator = () => {
     ]);
 
     if (names) {
-      setAllBatches(prev => [...prev, names]);
-      setCurrentBatchIndex(prev => prev + 1);
+      appendBatch(names);
       toast.success("New batch generated!");
     }
     setIsGenerating(false);
