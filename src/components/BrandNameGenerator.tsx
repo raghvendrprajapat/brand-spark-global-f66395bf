@@ -124,9 +124,12 @@ export const BrandNameGenerator = () => {
     ]);
 
     if (names) {
-      setAllBatches([names]);
-      setCurrentBatchIndex(0);
-      toast.success("10 brand names generated!");
+      setAllBatches(prev => {
+        const updated = [...prev, names];
+        setCurrentBatchIndex(updated.length - 1);
+        return updated;
+      });
+      toast.success("10 business names generated!");
     }
     setIsGenerating(false);
   };
