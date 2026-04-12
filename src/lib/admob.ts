@@ -24,7 +24,18 @@ export async function initializeAdMob(): Promise<void> {
 }
 
 export async function showBannerAd(): Promise<void> {
-  if (!Capacitor.isNativePlatform() || !admobInitialized) return;
+  if (!Capacitor.isNativePlatform()) return;
+
+  // Wait for initialization if it hasn't completed yet
+  if (!admobInitialized) {
+    try {
+      await AdMob.initialize();
+      admobInitialized = true;
+    } catch (e) {
+      console.error('AdMob late init failed:', e);
+      return;
+    }
+  }
 
   try {
     const options: BannerAdOptions = {
